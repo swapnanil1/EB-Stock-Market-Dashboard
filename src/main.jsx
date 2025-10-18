@@ -1,15 +1,16 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
 import { BrowserRouter } from "react-router-dom"
+import { ThemeProvider } from "@/components/theme-provider"
 import App from "./App.jsx"
 import "./index.css"
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<React.StrictMode>
 		<BrowserRouter>
-			<div className="dark">
+			<ThemeProvider>
 				<App />
-			</div>
+			</ThemeProvider>
 		</BrowserRouter>
 	</React.StrictMode>,
 )
