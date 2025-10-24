@@ -14,7 +14,7 @@ export const useAuth = ({ onLoginSuccess }) => {
 		setMessage({ type: "", text: "" })
 
 		const endpoint = isSignUp ? "/api/auth/signup" : "/api/auth/login"
-		const apiUrl = `http://localhost:5000${endpoint}`
+		const apiUrl = `https://stockpils-api.onrender.com${endpoint}`
 
 		try {
 			const response = await fetch(apiUrl, {

@@ -15,13 +15,13 @@ export const useTrade = () => {
 		try {
 			// Step 1: Get the live price.
 			const quoteData = await fetchWithAuth(
-				`http://localhost:5000/api/stocks/quote/${stock.symbol}`,
+				`https://stockpils-api.onrender.com/api/stocks/quote/${stock.symbol}`,
 			)
 			const price = quoteData.price
 			if (!price) throw new Error("Live price is unavailable.")
 
 			// Step 2: Submit the transaction.
-			await fetchWithAuth("http://localhost:5000/api/transactions", {
+			await fetchWithAuth("https://stockpils-api.onrender.com/api/transactions", {
 				method: "POST",
 				body: JSON.stringify({ symbol: stock.symbol, type, quantity, price }),
 			})

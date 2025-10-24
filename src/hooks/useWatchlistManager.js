@@ -9,7 +9,7 @@ const getAuthHeaders = () => {
 	}
 }
 
-const API_URL = "http://localhost:5000/api"
+const API_URL = "https://stockpils-api.onrender.com/api"
 
 export const useWatchlistManager = () => {
 	const [watchlist, setWatchlist] = useState([])

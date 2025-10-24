@@ -19,7 +19,7 @@ export const usePortfolio = () => {
 			setIsLoading(true)
 			setError(null)
 			try {
-				const response = await fetch("http://localhost:5000/api/portfolio", {
+				const response = await fetch("https://stockpils-api.onrender.com/api/portfolio", {
 					headers: getAuthHeaders(),
 				})
 				if (!response.ok) {

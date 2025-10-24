@@ -27,9 +27,12 @@ export const useStockSearch = () => {
 		// Debounce API calls will avoid spamming the server on every keystroke
 		const debounce = setTimeout(async () => {
 			try {
-				const response = await fetch(`http://localhost:5000/api/stocks/search?query=${query}`, {
-					headers: getAuthHeaders(),
-				})
+				const response = await fetch(
+					`https://stockpils-api.onrender.com/api/stocks/search?query=${query}`,
+					{
+						headers: getAuthHeaders(),
+					},
+				)
 				if (!response.ok) {
 					throw new Error("Search failed. Please try again.")
 				}

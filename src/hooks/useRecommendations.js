@@ -21,7 +21,7 @@ export const useRecommendations = (initialSymbol = "AAPL") => {
 		setError(null)
 		try {
 			const response = await fetch(
-				`http://localhost:5000/api/stocks/recommendations/${fetchSymbol}`,
+				`https://stockpils-api.onrender.com/api/stocks/recommendations/${fetchSymbol}`,
 				{
 					headers: getAuthHeaders(),
 				},
