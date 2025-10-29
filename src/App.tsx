@@ -1,3 +1,11 @@
+import { BrowserRouter, Route, Routes } from "react-router";
+import { PortfolioPage } from "./pages/Portfolio";
 export default function App() {
-	return <h1>Hello World</h1>;
+	return (
+		<BrowserRouter>
+			<Routes>
+				<Route path="/" element={<PortfolioPage />}></Route>
+			</Routes>
+		</BrowserRouter>
+	);
 }
