@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Header } from "./component/layout/Header";
+import { Header } from "./components/layout/Header";
 import { AuthProvider } from "./context/AuthContext";
 import { PortfolioPage } from "./pages/Portfolio";
 

@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../component/ui/Card";
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from "../components/ui/Card";
 import {
 	Table,
 	TableBody,
@@ -7,7 +12,7 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "../component/ui/Table";
+} from "../components/ui/Table";
 import { useAuth } from "../context/AuthContext"; // import the auth hook
 import type {
 	ApiPortfolioResponse, // raw data from API
