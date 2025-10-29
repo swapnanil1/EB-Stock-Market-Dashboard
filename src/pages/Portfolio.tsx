@@ -1,18 +1,18 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Card,
 	CardContent,
-	CardDescription,
-	CardFooter,
+	// CardDescription,
+	// CardFooter,
 	CardHeader,
 	CardTitle,
 } from "../component/ui/Card";
 import {
 	Table,
 	TableBody,
-	TableCaption,
+	// TableCaption,
 	TableCell,
-	TableFooter,
+	// TableFooter,
 	TableHead,
 	TableHeader,
 	TableRow,
@@ -77,6 +77,14 @@ const callAPI = (): Promise<PortfolioData> => {
 		}, 1500);
 	});
 };
+// helper function
+const formatCurrency = (value: number) => {
+	return new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency: "USD",
+	}).format(value);
+};
+
 export function PortfolioPage() {
 	// State Management
 	const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
@@ -109,16 +117,74 @@ export function PortfolioPage() {
 		return <div className="p-4 text-destructive">Error: {error}</div>;
 	}
 	return (
-		<div className="p-4">
-			<h1 className="text-3xl font-bold mb-4">My Portfolio</h1>
-
-			<p>Summary Cards </p>
-			<br />
-			<p>Holdings Table </p>
-
-			<pre className="mt-4 p-4 bg-secondary rounded-md">
-				{JSON.stringify(portfolio, null, 2)}
-			</pre>
+		<div className="container mx-auto p-4">
+			<h1 className="text-3xl font-bold mb-6">My Portfolio</h1>
+			{/* section 1: summary cards */}
+			<div className="grid gap-4 md:grid-cols-2 lg:grid-col-4 mb-6">
+				<Card>
+					<CardHeader>
+						<CardTitle>Total Value</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p className="text-2xl font-bold">
+							{formatCurrency(portfolio?.summary.totalValue ?? 0)}
+						</p>
+					</CardContent>
+				</Card>
+				<Card>
+					<CardHeader>
+						<CardTitle>Total Profit/Loss</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p className="text-2xl font-bold">
+							{formatCurrency(portfolio?.summary.totalProfitLoss ?? 0)}
+						</p>
+					</CardContent>
+				</Card>
+				<Card>
+					<CardHeader>
+						<CardTitle>Today's Gain/Loss</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p className="text-2xl font-bold">
+							{formatCurrency(portfolio?.summary.dailyChange ?? 0)}
+						</p>
+					</CardContent>
+				</Card>
+			</div>
+			<Card>
+				<CardHeader>
+					<CardTitle>Your Holding</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>Symbol</TableHead>
+								<TableHead>Quantity</TableHead>
+								<TableHead className="text-right">Market Value</TableHead>
+								<TableHead className="text-right">Total P/L</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{(portfolio?.holdings ?? []).map((holding) => {
+								return (
+									<TableRow key={holding.symbol}>
+										<TableCell>{holding.symbol}</TableCell>
+										<TableCell>{holding.quantity}</TableCell>
+										<TableCell className="text-right">
+											{formatCurrency(holding.marketValue) ?? 0}
+										</TableCell>
+										<TableCell className="text-right">
+											{formatCurrency(holding.totalProfitLoss) ?? 0}
+										</TableCell>
+									</TableRow>
+								);
+							})}
+						</TableBody>
+					</Table>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }
