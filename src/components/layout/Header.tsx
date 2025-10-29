@@ -1,11 +1,25 @@
+import { useNavigate } from "react-router-dom"; // for programmatic navigation
+import { useAuth } from "../../context/AuthContext"; // to check login state
 import { Button } from "../ui/Button";
+
 export function Header() {
+	const { isAuthenticated, logout } = useAuth(); // get auth state and functions
+	const navigate = useNavigate(); // hook to change pages
+
+	const handleLogout = () => {
+		logout();
+		navigate("/login"); // redirect to login after logout
+	};
+
 	return (
 		<header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
 			<div className="container mx-auto flex h-14 items-center">
-				{/* main title  */}
+				{/* main title */}
 				<div className="mr-4 flex items-center">
-					<span className="font-bold">StockPils</span>
+					<a href="/" className="font-bold">
+						{" "}
+						StockPils
+					</a>
 				</div>
 
 				{/* nav links */}
@@ -21,8 +35,9 @@ export function Header() {
 					</a>
 				</nav>
 
-				{/* search btn */}
-				<div className="flex flex-1 items-center justify-end space-x-4">
+				{/* Right side buttons */}
+				<div className="flex flex-1 items-center justify-end space-x-2">
+					{/* Search Button */}
 					<Button variant="ghost" size="sm">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -31,15 +46,24 @@ export function Header() {
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
+							strokeWidth="2"
+							strokeLinecap="round"
+							strokeLinejoin="round"
 						>
 							<title>Search</title>
 							<path d="m21 21-4.34-4.34" />
 							<circle cx="11" cy="11" r="8" />
 						</svg>
 					</Button>
+					{isAuthenticated ? (
+						<Button onClick={handleLogout} variant="ghost">
+							Logout
+						</Button>
+					) : (
+						<a href="/login">
+							<Button>Login</Button>
+						</a>
+					)}
 				</div>
 			</div>
 		</header>
