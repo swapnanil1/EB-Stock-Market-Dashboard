@@ -1,83 +1,22 @@
 import { useEffect, useState } from "react";
-import {
-	Card,
-	CardContent,
-	// CardDescription,
-	// CardFooter,
-	CardHeader,
-	CardTitle,
-} from "../component/ui/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "../component/ui/Card";
 import {
 	Table,
 	TableBody,
-	// TableCaption,
 	TableCell,
-	// TableFooter,
 	TableHead,
 	TableHeader,
 	TableRow,
 } from "../component/ui/Table";
-import type { PortfolioData } from "../types";
+import { useAuth } from "../context/AuthContext"; // import the auth hook
+import type {
+	ApiPortfolioResponse, // raw data from API
+	PortfolioDisplayData, // final calculated data for display
+} from "../types";
 
-const MOCK_PORTFOLIO_DATA: PortfolioData = {
-	summary: {
-		totalValue: 10550.0,
-		totalCost: 10000.0,
-		totalProfitLoss: 550.0,
-		dailyChange: 150.0,
-		dailyChangePercentage: 1.43,
-	},
-	holdings: [
-		{
-			symbol: "AAPL",
-			quantity: 10,
-			averagePrice: 150.0,
-			currentPrice: 175.0,
-			totalCost: 1500.0,
-			marketValue: 1750.0,
-			dailyChange: 50.0,
-			dailyChangePercentage: 2.04,
-			totalProfitLoss: 250.0,
-			totalProfitLossPercentage: 16.0,
-		},
-		{
-			symbol: "GOOGL",
-			quantity: 5,
-			averagePrice: 1300.0,
-			currentPrice: 1360.0,
-			totalCost: 6500.0,
-			marketValue: 6800.0,
-			dailyChange: 100.0,
-			dailyChangePercentage: 1.0,
-			totalProfitLoss: 300.0,
-			totalProfitLossPercentage: 4.0,
-		},
-		{
-			symbol: "TSLA",
-			quantity: 10,
-			averagePrice: 200.0,
-			currentPrice: 200.0,
-			totalCost: 2000.0,
-			marketValue: 2000.0,
-			dailyChange: 0.0,
-			dailyChangePercentage: 0.0,
-			totalProfitLoss: 0.0,
-			totalProfitLossPercentage: 0.0,
-		},
-	],
-};
-const callAPI = (): Promise<PortfolioData> => {
-	return new Promise((resolve, reject) => {
-		setTimeout(() => {
-			Math.random() > 0.9
-				? reject(
-						new Error("Failed to connect to the server . Please try later"),
-					)
-				: resolve(MOCK_PORTFOLIO_DATA);
-		}, 1500);
-	});
-};
-// helper function
+const API_BASE_URL = "https://stockpils-api.onrender.com";
+
+// Helper function for formatting currency
 const formatCurrency = (value: number) => {
 	return new Intl.NumberFormat("en-US", {
 		style: "currency",
@@ -86,48 +25,113 @@ const formatCurrency = (value: number) => {
 };
 
 export function PortfolioPage() {
-	// State Management
-	const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
-	const [isLoading, setIsLoading] = useState(false);
+	const { token } = useAuth(); // get the auth token from our context
+	const [portfolioData, setPortfolioData] =
+		useState<PortfolioDisplayData | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
-		const loadPortfolio = async () => {
+		const fetchAndProcessPortfolio = async () => {
+			// Don't fetch if the user is not logged in
+			if (!token) {
+				setIsLoading(false);
+				return;
+			}
+
 			try {
 				setIsLoading(true);
 				setError(null);
-				const data = await callAPI();
-				// if no errors setProtfolio data
-				setPortfolio(data);
+
+				// fetch raw data from our backend
+				const response = await fetch(`${API_BASE_URL}/api/portfolio`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				});
+
+				if (!response.ok) {
+					throw new Error("Failed to fetch portfolio data.");
+				}
+
+				const rawData: ApiPortfolioResponse = await response.json();
+
+				// perform all calculations on the frontend
+				const displayHoldings = rawData.holdings.map((holding) => {
+					const totalCost = holding.quantity * holding.averagePrice;
+					const marketValue = holding.quantity * holding.currentPrice;
+					const totalProfitLoss = marketValue - totalCost;
+					return { ...holding, marketValue, totalCost, totalProfitLoss };
+				});
+
+				const summary = displayHoldings.reduce(
+					(acc, holding) => {
+						acc.totalCost += holding.totalCost;
+						acc.totalMarketValue += holding.marketValue;
+						return acc;
+					},
+					{ totalCost: 0, totalMarketValue: 0 },
+				);
+
+				const totalProfitLoss = summary.totalMarketValue - summary.totalCost;
+				const totalValue = rawData.cashBalance + summary.totalMarketValue;
+
+				// set the final, calculated data into state
+				setPortfolioData({
+					summary: {
+						totalValue,
+						totalCost: summary.totalCost,
+						totalProfitLoss,
+					},
+					holdings: displayHoldings,
+				});
 			} catch (err) {
-				err instanceof Error
-					? setError(err.message)
-					: setError("Unknown error");
+				setError(
+					err instanceof Error ? err.message : "An unknown error occurred.",
+				);
 			} finally {
 				setIsLoading(false);
 			}
 		};
-		loadPortfolio();
-	}, []);
+
+		fetchAndProcessPortfolio();
+	}, [token]); // re-render if the token changes like on login
+
 	if (isLoading) {
-		return <div className="p-4">Loading portfolio...</div>;
+		return <div className="p-4 text-center">Loading portfolio...</div>;
 	}
 
 	if (error) {
-		return <div className="p-4 text-destructive">Error: {error}</div>;
+		return (
+			<div className="p-4 text-center text-destructive">Error: {error}</div>
+		);
 	}
+
+	// ff the user is logged out, show a message
+	if (!token)
+		return (
+			<div className="p-4 text-center">
+				Please log in to view your portfolio.
+			</div>
+		);
+
+	if (!portfolioData)
+		return <div className="p-4 text-center">No portfolio data available.</div>;
+
 	return (
 		<div className="container mx-auto p-4">
 			<h1 className="text-3xl font-bold mb-6">My Portfolio</h1>
-			{/* section 1: summary cards */}
-			<div className="grid gap-4 md:grid-cols-2 lg:grid-col-4 mb-6">
+
+			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
+				{" "}
+				{/* Changed to 3 columns */}
 				<Card>
 					<CardHeader>
 						<CardTitle>Total Value</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<p className="text-2xl font-bold">
-							{formatCurrency(portfolio?.summary.totalValue ?? 0)}
+							{formatCurrency(portfolioData.summary.totalValue)}
 						</p>
 					</CardContent>
 				</Card>
@@ -137,24 +141,25 @@ export function PortfolioPage() {
 					</CardHeader>
 					<CardContent>
 						<p className="text-2xl font-bold">
-							{formatCurrency(portfolio?.summary.totalProfitLoss ?? 0)}
+							{formatCurrency(portfolioData.summary.totalProfitLoss)}
 						</p>
 					</CardContent>
 				</Card>
 				<Card>
 					<CardHeader>
-						<CardTitle>Today's Gain/Loss</CardTitle>
+						<CardTitle>Total Invested</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<p className="text-2xl font-bold">
-							{formatCurrency(portfolio?.summary.dailyChange ?? 0)}
+							{formatCurrency(portfolioData.summary.totalCost)}
 						</p>
 					</CardContent>
 				</Card>
 			</div>
+
 			<Card>
 				<CardHeader>
-					<CardTitle>Your Holding</CardTitle>
+					<CardTitle>Your Holdings</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<Table>
@@ -167,20 +172,20 @@ export function PortfolioPage() {
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{(portfolio?.holdings ?? []).map((holding) => {
-								return (
-									<TableRow key={holding.symbol}>
-										<TableCell>{holding.symbol}</TableCell>
-										<TableCell>{holding.quantity}</TableCell>
-										<TableCell className="text-right">
-											{formatCurrency(holding.marketValue) ?? 0}
-										</TableCell>
-										<TableCell className="text-right">
-											{formatCurrency(holding.totalProfitLoss) ?? 0}
-										</TableCell>
-									</TableRow>
-								);
-							})}
+							{portfolioData.holdings.map((holding) => (
+								<TableRow key={holding.symbol}>
+									<TableCell className="font-medium">
+										{holding.symbol}
+									</TableCell>
+									<TableCell>{holding.quantity}</TableCell>
+									<TableCell className="text-right">
+										{formatCurrency(holding.marketValue)}
+									</TableCell>
+									<TableCell className="text-right">
+										{formatCurrency(holding.totalProfitLoss)}
+									</TableCell>
+								</TableRow>
+							))}
 						</TableBody>
 					</Table>
 				</CardContent>

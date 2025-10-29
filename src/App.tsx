@@ -1,11 +1,19 @@
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Header } from "./component/layout/Header";
+import { AuthProvider } from "./context/AuthContext";
 import { PortfolioPage } from "./pages/Portfolio";
+
 export default function App() {
 	return (
-		<BrowserRouter>
-			<Routes>
-				<Route path="/" element={<PortfolioPage />}></Route>
-			</Routes>
-		</BrowserRouter>
+		<AuthProvider>
+			<BrowserRouter>
+				<Header />
+				<main>
+					<Routes>
+						<Route path="/" element={<PortfolioPage />} />
+					</Routes>
+				</main>
+			</BrowserRouter>
+		</AuthProvider>
 	);
 }
