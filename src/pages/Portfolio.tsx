@@ -19,7 +19,7 @@ import type {
 	PortfolioDisplayData, // final calculated data for display
 } from "../types";
 
-const API_BASE_URL = "API_BASE_URL";
+const API_BASE_URL = "http://localhost:5000";
 
 // Helper function for formatting currency
 const formatCurrency = (value: number) => {

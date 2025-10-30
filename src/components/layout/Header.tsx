@@ -1,10 +1,14 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // for programmatic navigation
 import { useAuth } from "../../context/AuthContext"; // to check login state
+import { TransactionForm } from "../stocks/TransactionForm";
 import { Button } from "../ui/Button";
-
+import { Dialog } from "../ui/Dialog";
 export function Header() {
 	const { isAuthenticated, logout } = useAuth(); // get auth state and functions
 	const navigate = useNavigate(); // hook to change pages
+
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
 
 	const handleLogout = () => {
 		logout();
@@ -38,7 +42,11 @@ export function Header() {
 				{/* Right side buttons */}
 				<div className="flex flex-1 items-center justify-end space-x-2">
 					{/* Search Button */}
-					<Button variant="ghost" size="sm">
+					<Button
+						variant="ghost"
+						size="sm"
+						onClick={() => setIsDialogOpen(true)}
+					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="24"
@@ -64,6 +72,9 @@ export function Header() {
 							<Button>Login</Button>
 						</a>
 					)}
+					<Dialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+						<TransactionForm />
+					</Dialog>
 				</div>
 			</div>
 		</header>
