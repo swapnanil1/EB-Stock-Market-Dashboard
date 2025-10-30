@@ -17,7 +17,7 @@ import {
 } from "../components/ui/Table";
 import { useAuth } from "../context/AuthContext";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://stockpils-api.onrender.com";
 
 interface WatchlistItem {
 	symbol: string;

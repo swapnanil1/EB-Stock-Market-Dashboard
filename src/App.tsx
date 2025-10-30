@@ -9,7 +9,7 @@ import { WatchlistPage } from "./pages/WatchlistPage";
 export type Theme = "light" | "dark";
 
 export default function App() {
-	const [theme, setTheme] = useState<Theme>("light");
+	const [theme, setTheme] = useState<Theme>("dark");
 
 	useEffect(() => {
 		const root = window.document.documentElement;

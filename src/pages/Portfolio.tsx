@@ -19,7 +19,7 @@ import type {
 	PortfolioDisplayData, // final calculated data for display
 } from "../types";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://stockpils-api.onrender.com";
 
 // Helper function for formatting currency
 const formatCurrency = (value: number) => {

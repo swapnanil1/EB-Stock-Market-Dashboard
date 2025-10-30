@@ -3,7 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://stockpils-api.onrender.com";
 
 // define the shape of our search result
 interface SearchResult {
