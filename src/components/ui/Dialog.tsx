@@ -50,9 +50,9 @@ export const Dialog = ({
 			role="dialog"
 			aria-modal="true"
 			tabIndex={-1} // allow keyboard focus
-			className="fixed inset-100 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+			className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
 			onClick={handleOverlayClick}
-			onKeyDown={(e) => {
+			onKeyUp={(e) => {
 				if (e.key === "Enter" || e.key === " ") {
 					onClose();
 				}
@@ -60,13 +60,13 @@ export const Dialog = ({
 		>
 			<div
 				className={cn(
-					"relative w-full max-w-lg rounded-lg border bg-background p-6 shadow-lg",
+					"relative w-full max-w-lg max-h-[90vh] overflow-auto rounded-lg border bg-background p-2 shadow-lg",
 					className,
 				)}
 			>
 				<button
 					onClick={onClose}
-					className="absolute top-3 right-3 p-1 rounded-full text-foreground/70 hover:bg-secondary"
+					className="absolute top-2 right-3 p-1 rounded-full text-foreground/70 hover:bg-secondary"
 					aria-label="Close dialog"
 					type="button"
 				>
@@ -80,7 +80,7 @@ export const Dialog = ({
 						strokeWidth="2"
 						strokeLinecap="round"
 						strokeLinejoin="round"
-						className="h-4 w-4"
+						className="h-8 w-8"
 					>
 						<title>Close</title>
 						<path d="M18 6 6 18" />

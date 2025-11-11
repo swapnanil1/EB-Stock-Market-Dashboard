@@ -20,14 +20,16 @@ export default function App() {
 	return (
 		<AuthProvider>
 			<BrowserRouter>
-				<Header theme={theme} setTheme={setTheme} />
-				<main>
-					<Routes>
-						<Route path="/" element={<PortfolioPage />} />
-						<Route path="/watchlist" element={<WatchlistPage />} />
-						<Route path="/login" element={<LoginPage />} />
-					</Routes>
-				</main>
+				<div className="min-h-screen flex flex-col overflow-x-hidden">
+					<Header theme={theme} setTheme={setTheme} />
+					<main className="flex-1 flex flex-col min-h-0">
+						<Routes>
+							<Route path="/" element={<PortfolioPage />} />
+							<Route path="/watchlist" element={<WatchlistPage />} />
+							<Route path="/login" element={<LoginPage />} />
+						</Routes>
+					</main>
+				</div>
 			</BrowserRouter>
 		</AuthProvider>
 	);

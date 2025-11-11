@@ -18,6 +18,7 @@ import type {
 	ApiPortfolioResponse, // raw data from API
 	PortfolioDisplayData, // final calculated data for display
 } from "../types";
+import Landing from "./Landing";
 
 const API_BASE_URL = "https://stockpils-api.onrender.com";
 
@@ -112,13 +113,8 @@ export function PortfolioPage() {
 		);
 	}
 
-	// ff the user is logged out, show a message
-	if (!token)
-		return (
-			<div className="p-4 text-center">
-				Please log in to view your portfolio.
-			</div>
-		);
+	// if the user is logged out, show landing page
+	if (!token) return <Landing></Landing>;
 
 	if (!portfolioData)
 		return <div className="p-4 text-center">No portfolio data available.</div>;
@@ -126,7 +122,6 @@ export function PortfolioPage() {
 	return (
 		<div className="container mx-auto p-4">
 			<h1 className="text-3xl font-bold mb-6">My Portfolio</h1>
-
 			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
 				{" "}
 				{/* Changed to 3 columns */}
@@ -161,7 +156,6 @@ export function PortfolioPage() {
 					</CardContent>
 				</Card>
 			</div>
-
 			<Card>
 				<CardHeader>
 					<CardTitle>Your Holdings</CardTitle>

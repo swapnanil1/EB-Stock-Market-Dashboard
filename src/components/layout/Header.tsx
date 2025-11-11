@@ -80,12 +80,12 @@ export function Header({ theme, setTheme }: HeaderProps) {
 
 	const handleLogout = () => {
 		logout();
-		navigate("/login");
+		navigate("/");
 	};
 
 	return (
 		<>
-			<header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+			<header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
 				<div className="container mx-auto flex h-14 items-center justify-between">
 					<div className="flex items-center">
 						<Link to="/" className="font-bold text-lg">
@@ -101,6 +101,9 @@ export function Header({ theme, setTheme }: HeaderProps) {
 							>
 								Portfolio
 							</Link>
+							<Button variant="ghost" onClick={() => setIsDialogOpen(true)}>
+								<SearchIcon /> Search
+							</Button>
 							<Link
 								to="/watchlist"
 								className="text-foreground/60 transition-colors hover:text-foreground"
@@ -108,9 +111,6 @@ export function Header({ theme, setTheme }: HeaderProps) {
 								Watchlist
 							</Link>
 						</nav>
-						<Button variant="ghost" onClick={() => setIsDialogOpen(true)}>
-							<SearchIcon /> Search
-						</Button>
 					</div>
 
 					<div className="flex items-center gap-x-2">
